@@ -8,8 +8,8 @@ import { login } from '../actions/userActions'
 const Signin = ({ location, history }) => {
 
 
-    const [email, setEmail] = useState('kennedy@gmail.com')
-    const [password, setPassword] = useState('123456')
+    const [email, setEmail] = useState('achaleebotoma2002@gmail.com')
+    const [password, setPassword] = useState('Jesus123')
     
     const dispatch = useDispatch()
 

@@ -265,9 +265,22 @@ const reducer = combineReducers({
 })
 
 
-const userInfoFromStorage = localStorage.getItem('userInfo')
-    ? JSON.parse(localStorage.getItem('userInfo'))
-    : null
+// const userInfoFromStorage = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null
+
+function getUserInfoFromLocalStorage() {
+    const userInfoFromStorage = localStorage.getItem('userInfo');
+
+try {
+  return userInfoFromStorage ? JSON.parse(userInfoFromStorage) : null;
+} catch (error) {
+  console.error('Error parsing userInfo from localStorage:', error);
+  // You can optionally return a default value here (e.g., an empty object)
+  return null;
+}
+}
+
+const userInfoFromStorage = getUserInfoFromLocalStorage()
+
 
 const initialState = {
     userLogin: { userInfo: userInfoFromStorage }

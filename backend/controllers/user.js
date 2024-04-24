@@ -1,7 +1,7 @@
 const asyncHandler  = require( 'express-async-handler')
 const { generateToken }= require ('../utils/generateToken.js')
 const User = require ('../models/user.js')
-
+const bcrypt =  require('bcryptjs')
 
 
 
@@ -13,8 +13,11 @@ exports.authUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body
 
     const user = await User.findOne({ email })
-
-    if (user && (await user.matchPassword(password))) {
+    console.log("password user.password",password, user.password )
+    const passwordsMatch = await bcrypt.compare(password, user.password);
+     console.log('passwordsMatch', passwordsMatch)
+     
+    if (user && passwordsMatch) {
         res.json({
             _id: user._id,
             name: user.name,
@@ -36,15 +39,26 @@ exports.registerUser = asyncHandler(async (req, res) => {
 
     const userExists = await User.findOne({ email })
 
+    const adminEmails = ['achaleebotoma2002@gmail.com', 'hhhh@gmail.com']
+    const checkIfAdmin = (email, adminEmails) => {
+      return adminEmails.find((item) => email === item) ? 0 : 1
+    }
+    const role = checkIfAdmin(email, adminEmails)
+    console.log('role', role)
+
     if (userExists) {
         res.status(400)
         throw new Error('User already exists')
     }
 
+    const salt = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash(password, salt)
+
     const user = await User.create({
         name,
         email,
-        password,
+        password: hashedPassword,
+        role
     })
 
     if (user) {
